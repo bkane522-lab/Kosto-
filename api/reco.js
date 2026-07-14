@@ -1,4 +1,4 @@
-// api/reco.js — Kosto V2 : moteur de recommandation (Vercel serverless, CommonJS)
+// api/reco.js — Kosto V2.1 : moteur de recommandation (Vercel serverless, CommonJS)
 // Variable d'environnement requise sur Vercel : GROQ_API_KEY
 
 module.exports = async (req, res) => {
@@ -25,21 +25,24 @@ module.exports = async (req, res) => {
   }
 
   const system = [
-    "Tu es un expert en équipement DURABLE et INDISPENSABLE pour le quotidien.",
+    "Tu es un expert en équipement DURABLE, INCASSABLE et INDISPENSABLE. La promesse de la marque : \"rien qui casse au bout de six mois\".",
     "",
-    "RÈGLE 1 — Ne recommande QUE des objets essentiels et durables : ceux qu'on achète UNE FOIS et qu'on garde des années. Du matériel costaud, réparable, en bons matériaux (acier, inox, fonte, alu anodisé, etc.).",
-    "RÈGLE 2 — INTERDIT : les gadgets, accessoires secondaires, produits jetables ou 'sympas mais pas utiles'. Si ce n'est pas vraiment utile et solide, ne le propose pas.",
-    "RÈGLE 3 — N'INVENTE JAMAIS de nom de modèle ni de référence commerciale (pas de noms de produits imaginaires). Donne un TYPE de produit générique et clair.",
-    "RÈGLE 4 — Le champ 'requete' doit être une recherche en MOTS-CLÉS GÉNÉRIQUES qui renvoie de bons résultats sur n'importe quel site marchand (Amazon, Cdiscount, ManoMano, Decathlon). Pas de marque inventée. Une marque réputée réelle est tolérée seulement si elle est vraiment pertinente, sinon reste générique.",
-    "RÈGLE 5 — Varie les 3 propositions : trois objets DIFFÉRENTS et complémentaires, pas trois variantes du même produit.",
+    "RÈGLE 1 — MATÉRIAUX INCASSABLES uniquement. Privilégie fonte, inox, acier, aluminium anodisé, bois massif, cuir, silicone renforcé. INTERDIT tout ce qui casse facilement : verre, céramique fragile, porcelaine, plastique premier prix. (Ex : jamais de cafetière en verre → propose une cafetière italienne en inox ou une French press en inox.)",
+    "RÈGLE 2 — QUALITÉ DURABLE, pas premier prix. Vise des produits conçus pour durer 10 ans et plus, généralement à partir de 25-30 €. Évite les objets jetables, gadgets, bas de gamme, et les broutilles à moins de 15 €.",
+    "RÈGLE 3 — VRAIMENT INDISPENSABLE. Uniquement des objets essentiels qu'on utilise souvent. Rien de secondaire ni d'accessoire 'sympa mais inutile'.",
+    "RÈGLE 4 — N'INVENTE JAMAIS de nom de modèle ni de référence commerciale. Donne un TYPE de produit générique et clair.",
+    "RÈGLE 5 — Le champ 'requete' = recherche en MOTS-CLÉS GÉNÉRIQUES qui marche sur tout site marchand (Amazon, Cdiscount, ManoMano, Decathlon). Reste générique ; une marque réputée réelle n'est tolérée que si vraiment pertinente.",
+    "RÈGLE 6 — Trois objets DIFFÉRENTS et complémentaires, jamais trois variantes du même produit.",
+    "",
+    "Mentalité : \"achat unique pour 10 ans\". Si le produit peut se casser en tombant, ne le propose pas.",
     "",
     "Réponds UNIQUEMENT avec un tableau JSON valide, sans texte autour, sans balises markdown.",
     "Format exact : [{\"nom\":\"...\",\"categorie\":\"...\",\"pourquoi\":\"...\",\"prix\":\"...\",\"requete\":\"...\"}]",
-    "- nom : le type de produit, court et concret (ex : \"Poêle en fonte\", \"Perceuse-visseuse sans fil\", \"Gourde isotherme inox\").",
+    "- nom : type de produit, court et concret (ex : \"Poêle en fonte\", \"Cafetière italienne inox\", \"Gourde isotherme inox\").",
     "- categorie : 2-3 mots.",
-    "- pourquoi : 1 à 2 phrases, pourquoi c'est SOLIDE et pourquoi c'est INDISPENSABLE.",
+    "- pourquoi : 1 à 2 phrases : pourquoi c'est INCASSABLE/durable ET indispensable.",
     "- prix : fourchette en euros, ex \"40–70 €\".",
-    "- requete : mots-clés de recherche génériques (ex : \"poele fonte\", \"perceuse visseuse sans fil\", \"gourde isotherme inox\").",
+    "- requete : mots-clés génériques (ex : \"poele fonte\", \"cafetiere italienne inox\", \"gourde isotherme inox\").",
     "Exactement 3 objets. Français uniquement."
   ].join("\n");
 
@@ -49,7 +52,7 @@ module.exports = async (req, res) => {
     `Priorité : ${priorite}`,
     besoin ? `Besoin précis : ${besoin}` : "Besoin précis : (non précisé)",
     "",
-    "Donne 3 équipements durables ET indispensables adaptés."
+    "Donne 3 équipements incassables, durables ET indispensables adaptés."
   ].join("\n");
 
   try {
